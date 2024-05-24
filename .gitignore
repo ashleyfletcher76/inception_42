@@ -1,6 +1,4 @@
 secrets/
-node_modules/
 *.log
 .DS_Store
 .env
-echo "secrets/" >> .gitignore
