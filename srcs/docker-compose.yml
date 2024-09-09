@@ -1,1 +1,11 @@
 version: "3.9"
+
+services:
+  nginx:
+    build: ./srcs/requirements/nginx
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    ports:
+      - "443:443"
+    volumes:
+      - "./srcs/requirements/nginx/conf:/etc/nginx/conf"

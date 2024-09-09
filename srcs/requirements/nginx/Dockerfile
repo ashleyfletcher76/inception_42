@@ -1,23 +1,16 @@
-From alpine: 3.18
+FROM debian:bullseye
 
-# installs nginx wihtout extras and OpenSSL
-RUN apk update && apk upgrade && \
-    apk add --no-cache nginx openssl bash
-
-# create the correct directories (store nginx config files, website files, SSL certs, stores its PID)
-RUN mkdir -p /etc/nginx /var/www/html /etc/nginx/certs /run/nginx
-
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+# install NGINX and OpenSSL
+RUN apt-get update -y && apt-get upgrade -y && \
+	apt-get install -y nginx openssl
 
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/nginx/certs/self-signed.key \
-    -out /etc/nginx/certs/self-signed.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=yourdomain.com"
+	-keyout /etc/ssl/private/nginx-selfsigned.key \
+	-out /etc/ssl/certs/nginx-selfsigned.crt \
+	-subj "/C=MO/L=KH/O=1337/OU=student/CN=asfletch.42.fr"
 
-RUN chown -R nginx:nginx /var/www/html /etc/nginx /run/nginx
 
-# uses port 443 to listen for nginx
-EXPOSE 443
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 # makes sure nginx is the main process of the container
 CMD ["nginx", "-g", "daemon off;"]
