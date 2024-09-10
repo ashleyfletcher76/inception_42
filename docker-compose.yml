@@ -25,6 +25,8 @@ services:
   mariadb:
     build: requirements/mariadb/.
     container_name: mariadb
+    env_file:
+      - .env
     volumes:
       - ./database:/var/lib/mysql
     networks:
