@@ -38,8 +38,8 @@ services:
       - mariadb_data:/var/lib/mysql
       - ./secrets/mysql_user_password.txt:/run/secrets/mysql_user_password:ro
       - ./secrets/mysql_admin_password.txt:/run/secrets/mysql_admin_password:ro
-      - ./requirements/mariadb/init-db.sh:/usr/local/bin/init-db.sh:ro
-      - ./requirements/mariadb/init.sql.template:/mnt/init.sql.template:ro
+      - ./requirements/tools/mariadb/init_db.sh:/usr/local/bin/init_db.sh:ro
+      - ./requirements/mariadb/tools/init.sql.template:/mnt/init.sql.template:ro
     command: ["/usr/local/bin/init_db.sh"]
     networks:
       - backend
@@ -49,3 +49,4 @@ volumes:
 
 networks:
   backend:
+    driver: bridge
