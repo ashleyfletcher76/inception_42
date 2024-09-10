@@ -16,10 +16,10 @@ RUN useradd -r -d /var/www -s /bin/false nginxuser && \
 	chown -R nginxuser:nginxuser /etc/nginx /var/log/nginx /var/www /etc/ssl/private/nginx-selfsigned.key
 
 # copy custom nginx config
-COPY ./conf/nginx.conf /etc/nginx/nginx.template.conf  # Save as template for substitution
+COPY ./conf/nginx.conf /etc/nginx/nginx.template.conf
 
-# expose ports for HTTP and HTTPS
-EXPOSE 80 443
+# expose ports for HTTPS
+EXPOSE 443
 
 # entrypoint script to substitute environment variables in config and start NGINX
 COPY ./tools/entrypoint.sh /entrypoint.sh
