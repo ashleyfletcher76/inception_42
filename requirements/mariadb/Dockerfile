@@ -6,6 +6,6 @@ RUN apt update && apt upgrade -y && apt install -y \
 COPY 50-server.cnf /etc/mysql/mariadb.conf.d/.
 COPY tools/init.sql /etc/mysql/init.sql
 
-RUN mkdir /run/mysqld
+RUN mkdir /run/mysqld && chmod +x 
 
-CMD ["mysqld_safe"]
+CMD ["./script.sh"]
