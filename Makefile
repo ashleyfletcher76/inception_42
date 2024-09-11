@@ -15,6 +15,7 @@ down:
 # stop, remove containers netowrks and volumes
 fclean:
 	@$(DOCKER_COMPOSE) down -v --rmi all --remove-orphans
+	@docker volume prune -f
 	@echo "Containers, networks, images and volumes have been removed."
 
 # restart containers
