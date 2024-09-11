@@ -13,6 +13,7 @@ services:
       - wordpress_data:/var/www/html
     networks:
       inception:
+
   wordpress:
     build: srcs/requirements/wordpress/.
     container_name: wp-php
@@ -20,11 +21,27 @@ services:
       - mariadb
     volumes:
       - wordpress_data:/var/www/html
+    environment:
+      WP_ADMIN: ${WP_ADMIN}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_EDITOR: ${WP_EDITOR}
+      WP_EDITOR_EMAIL: ${WP_EDITOR_EMAIL}
+    secrets:
+      - mysql_password
+      - wp_admin_password
+      - wp_editor_password
     networks:
       inception:
+
   mariadb:
     build: srcs/requirements/mariadb/.
     container_name: mariadb
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_ADMIN: ${MYSQL_ADMIN}
+    secrets:
+      - mysql_password
+      - mysql_admin_password
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -36,3 +53,13 @@ networks:
 volumes:
   mariadb_data:
   wordpress_data:
+
+secrets:
+  mysql_password:
+    file: ./secrets/mysql_password.txt
+  mysql_admin_password:
+    file: ./secrets/mysql_admin_password.txt
+  wp_admin_password:
+    file: ./secrets/wp_admin_password.txt
+  wp_editor_password:
+    file: ./secrets/wp_editor_password.txt
