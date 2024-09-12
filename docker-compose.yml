@@ -26,6 +26,7 @@ services:
       WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
       WP_EDITOR: ${WP_EDITOR}
       WP_EDITOR_EMAIL: ${WP_EDITOR_EMAIL}
+      MYSQL_USER: ${MYSQL_USER}
     secrets:
       - mysql_password
       - wp_admin_password
