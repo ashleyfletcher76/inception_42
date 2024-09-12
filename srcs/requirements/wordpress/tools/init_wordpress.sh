@@ -21,13 +21,19 @@ if [ ! -f wp-config.php ]; then
 	echo "Setting up WordPress for the first time..."
 
 	# download WordPress core files
+	echo "Downloading word press core files..."
 	./wp-cli.phar core download --allow-root
+	echo "Download wordpress complete."
 
 	# create wp-config.php
+	echo "Creating wp-config..."
 	./wp-cli.phar config create --dbname=wordpress --dbuser=$MYSQL_USER --dbpass=$(cat /run/secrets/mysql_password) --dbhost=mariadb --allow-root
+	echo "Creating wp-config complete."
 
 	# install WordPress with the superuser
+	echo "Instaliing wordpress..."
 	./wp-cli.phar core install --url=localhost --title=inception --admin_user=$WP_ADMIN --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --allow-root
+	echo "Instaliing wordpress complete"
 
 	# create an additional editor user
 	./wp-cli.phar user create $WP_EDITOR $WP_EDITOR_EMAIL --role=editor --user_pass=$WP_EDITOR_PASSWORD --allow-root
@@ -35,6 +41,8 @@ if [ ! -f wp-config.php ]; then
 	# Set permissions
 	chown -R www-data:www-data /var/www/html
 	chmod -R 755 /var/www/html
+
+	touch /var/www/html/.setup_done
 
 else
 	echo "WordPress is already set up."

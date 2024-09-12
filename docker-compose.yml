@@ -5,8 +5,8 @@ services:
     build: srcs/requirements/nginx/.
     container_name: nginx
     depends_on:
-      - wordpress
-      - mariadb
+      wordpress:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
@@ -14,11 +14,10 @@ services:
     networks:
       inception:
 
+
   wordpress:
     build: srcs/requirements/wordpress/.
     container_name: wp-php
-    depends_on:
-      - mariadb
     volumes:
       - wordpress_data:/var/www/html
     environment:
@@ -33,6 +32,11 @@ services:
       - wp_editor_password
     networks:
       inception:
+    healthcheck:
+      test: [ "CMD-SHELL", "[ -f /var/www/html/.setup_done ] || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   mariadb:
     build: srcs/requirements/mariadb/.
@@ -48,12 +52,15 @@ services:
     networks:
       inception:
 
+
 networks:
   inception:
+
 
 volumes:
   mariadb_data:
   wordpress_data:
+
 
 secrets:
   mysql_password:
