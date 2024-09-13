@@ -13,11 +13,15 @@ services:
       - wordpress_data:/var/www/html
     networks:
       inception:
+    restart: always
 
 
   wordpress:
     build: srcs/requirements/wordpress/.
     container_name: wp-php
+    depends_on:
+      mariadb:
+        condition: service_healthy
     volumes:
       - wordpress_data:/var/www/html
     environment:
@@ -36,7 +40,7 @@ services:
       test: [ "CMD-SHELL", "[ -f /var/www/html/.setup_done ] || exit 1" ]
       interval: 15s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   mariadb:
     build: srcs/requirements/mariadb/.
@@ -51,6 +55,12 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       inception:
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mariadb"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: always
 
 
 networks:

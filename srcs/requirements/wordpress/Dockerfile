@@ -1,5 +1,10 @@
 FROM debian:bullseye
 
+# update package lists, upgrade installed packages, and install necessary dependencies
+# - php7.4-fpm: PHP FastCGI Process Manager, needed for running PHP applications
+# - php7.4-mysqli: MySQLi extension for interacting with MariaDB/MySQL databases
+# - mariadb-client: MySQL client tools, allowing PHP to connect to the MariaDB database
+# after installation, remove cached package lists to reduce the image size
 RUN apt update && apt upgrade -y && apt install -y \
 	php7.4-fpm \
 	php7.4-mysqli \
@@ -9,6 +14,7 @@ RUN apt update && apt upgrade -y && apt install -y \
 
 RUN mkdir -p /run/php
 
+# this file customizes PHP-FPM's behavior, such as listening on a specific socket
 COPY www.conf /etc/php/7.4/fpm/pool.d/.
 
 COPY ./tools/init_wordpress.sh .
