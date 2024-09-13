@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exits at first non-zero status
+set -e
+
 # check if passwords and or environment variables are there
 if [ -z "$MYSQL_USER" ] || [ -z "MYSQL_ADMIN" ]; then
 	echo "ERROR: MYSQL_USER or MYSQL_ADMIN is not set. Exiting."
