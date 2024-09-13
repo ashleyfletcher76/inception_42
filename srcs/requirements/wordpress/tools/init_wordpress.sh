@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exits at first non-zero status
+set -e
+
 cd /var/www/html
 
 # download wp-cli.phar if need be
@@ -16,6 +19,7 @@ done
 
 WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_EDITOR_PASSWORD=$(cat /run/secrets/wp_editor_password)
+MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
 
 if [ ! -f wp-config.php ]; then
 	echo "Setting up WordPress for the first time..."
@@ -27,7 +31,7 @@ if [ ! -f wp-config.php ]; then
 
 	# create wp-config.php
 	echo "Creating wp-config..."
-	./wp-cli.phar config create --dbname=wordpress --dbuser=$MYSQL_USER --dbpass=$(cat /run/secrets/mysql_password) --dbhost=mariadb --allow-root
+	./wp-cli.phar config create --dbname=wordpress --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --allow-root
 	echo "Creating wp-config complete."
 
 	# install WordPress with the superuser
@@ -46,6 +50,11 @@ if [ ! -f wp-config.php ]; then
 
 else
 	echo "WordPress is already set up."
+fi
+
+if [ -f wp-cli.phar ]; then
+	echo "Cleaning up .phar file"
+	rm wp-cli.phar
 fi
 
 php-fpm7.4 -F
