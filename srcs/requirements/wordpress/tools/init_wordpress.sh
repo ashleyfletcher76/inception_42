@@ -48,4 +48,4 @@ else
 	echo "WordPress is already set up."
 fi
 
-php-fpm8.2 -F
+php-fpm7.4 -F
