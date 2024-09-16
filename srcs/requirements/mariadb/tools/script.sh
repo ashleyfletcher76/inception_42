@@ -1,43 +1,64 @@
 #!/bin/bash
 
-# exits at first non-zero status
-set -e
-
-# check if passwords and or environment variables are there
-if [ -z "$MYSQL_USER" ] || [ -z "MYSQL_ADMIN" ]; then
-	echo "ERROR: MYSQL_USER or MYSQL_ADMIN is not set. Exiting."
-	exit 1
+# Check if passwords and environment variables are set
+if [ -z "$MYSQL_USER" ]; then
+    echo "ERROR: MYSQL_USER is not set. Exiting."
+    exit 1
 fi
 
-if [ ! -f /run/secrets/mysql_password ] || [ ! -f /run/secrets/mysql_admin_password ]; then
-	echo "ERROR: Secrets not found. Exiting."
-	exit 1
+if [ ! -f /run/secrets/mysql_password ]; then
+    echo "ERROR: Secrets not found. Exiting."
+    exit 1
 fi
 
-# read the secrets files
+# Read the secrets
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
-MYSQL_ADMIN_PASSWORD=$(cat /run/secrets/mysql_admin_password)
 
-# use these variables for the init.sql
+# Use these variables for the init.sql
 sed -i "s/password_placeholder/$MYSQL_PASSWORD/g" /etc/mysql/init.sql
-sed -i "s/admin_password_placeholder/$MYSQL_ADMIN_PASSWORD/g" /etc/mysql/init.sql
 sed -i "s/\${MYSQL_USER}/$MYSQL_USER/g" /etc/mysql/init.sql
-sed -i "s/\${MYSQL_ADMIN}/$MYSQL_ADMIN/g" /etc/mysql/init.sql
 
-# start in background
-mysqld_safe &
+# Debug: Verify that sed replaced the placeholders correctly
+echo "Verifying init.sql replacements:"
+cat /etc/mysql/init.sql
 
-sleep 5
-
-DB_EXISTS=$(echo "SHOW DATABASES LIKE 'wordpress';" | mysql -u root -p"$MYSQL_ADMIN_PASSWORD" -s --skip-column-names)
-
-# now check if database already exists
-if [ "$DB_EXISTS" != "wordpress" ]; then
-	echo "Database does not exist. Initialising.."
-	mysql_install_db
-	mysql -u root -p"$MYSQL_ADMIN_PASSWORD" < /etc/mysql/init.sql
-else
-	echo "Database already exists."
+# Clean up the MySQL data directory if present
+if [ -d "/var/lib/mysql/mysql" ]; then
+    echo "Cleaning up existing MySQL data..."
+    rm -rf /var/lib/mysql/*
 fi
 
-wait
+# Initialize the database if not already initialized
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "Initializing database..."
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+
+    echo "Starting MariaDB temporarily"
+    mysqld --user=mysql --datadir=/var/lib/mysql --skip-networking &
+    pid="$!"
+
+    # Wait for MariaDB to start
+    echo "Waiting for MariaDB to start..."
+    until mysqladmin ping --silent; do
+        sleep 1
+    done
+
+    # Set the root password explicitly
+    echo "Setting root password"
+    mysql -uroot <<EOF
+        ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';
+        FLUSH PRIVILEGES;
+EOF
+
+    echo "Running init SQL script to set up database"
+    mysql -uroot -p$MYSQL_PASSWORD < /etc/mysql/init.sql
+
+    # Shut down MariaDB after initialization
+    mysqladmin -uroot -p$MYSQL_PASSWORD shutdown
+else
+    echo "Database already initialized."
+fi
+
+# Start MariaDB normally
+exec mysqld --user=mysql --datadir=/var/lib/mysql
+

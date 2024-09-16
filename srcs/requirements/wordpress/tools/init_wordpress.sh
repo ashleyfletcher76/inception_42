@@ -21,6 +21,10 @@ WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_EDITOR_PASSWORD=$(cat /run/secrets/wp_editor_password)
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
 
+echo "MYSQL_USER is: $MYSQL_USER"
+echo "MYSQL_PASSWORD is: $MYSQL_PASSWORD"
+
+
 if [ ! -f wp-config.php ]; then
 	echo "Setting up WordPress for the first time..."
 

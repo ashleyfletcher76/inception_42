@@ -49,10 +49,8 @@ services:
     container_name: mariadb
     environment:
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_ADMIN: ${MYSQL_ADMIN}
     secrets:
       - mysql_password
-      - mysql_admin_password
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -77,8 +75,6 @@ volumes:
 secrets:
   mysql_password:
     file: ./secrets/mysql_password.txt
-  mysql_admin_password:
-    file: ./secrets/mysql_admin_password.txt
   wp_admin_password:
     file: ./secrets/wp_admin_password.txt
   wp_editor_password:

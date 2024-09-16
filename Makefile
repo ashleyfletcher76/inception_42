@@ -37,6 +37,5 @@ secrets:
 	@echo "Copying and setting secrets..."
 	@chmod 600 secrets/mysql_user_password.txt
 	@chmod 600 secrets/mysql_password.txt
-	@chmod 600 secrets/mysql_admin_password.txt
 
 .PHONY: all up down fclean re ps log nginx_ip secrets
