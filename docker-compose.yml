@@ -10,8 +10,8 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./ssl/cert.pem:/etc/nginx/ssl/cert.pem:ro
-      - ./ssl/key.pem:/etc/nginx/ssl/key.pem:ro
+      - /home/ashley/ssl/cert.pem:/etc/nginx/ssl/cert.pem:ro
+      - /home/ashley/ssl/key.pem:/etc/nginx/ssl/key.pem:ro
       - wordpress_data:/var/www/html
     networks:
       inception:
