@@ -2,7 +2,10 @@ version: "3.8"
 
 services:
   nginx:
-    build: srcs/requirements/nginx/.
+    build:
+      context: srcs/requirements/nginx/.
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     container_name: nginx
     depends_on:
       wordpress:
@@ -10,13 +13,10 @@ services:
     ports:
       - "443:443"
     volumes:
-      - /home/ashley/ssl/cert.pem:/etc/nginx/ssl/cert.pem:ro
-      - /home/ashley/ssl/key.pem:/etc/nginx/ssl/key.pem:ro
       - wordpress_data:/var/www/html
     networks:
       inception:
     restart: always
-
 
   wordpress:
     build: srcs/requirements/wordpress/.
@@ -56,12 +56,11 @@ services:
     networks:
       inception:
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "mariadb"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "mariadb" ]
       interval: 5s
       timeout: 10s
       retries: 5
     restart: always
-
 
 networks:
   inception:
