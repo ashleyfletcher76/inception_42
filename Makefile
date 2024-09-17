@@ -1,7 +1,13 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 
 # build and run all services
-all: up
+all: prepare up
+
+prepare: 
+	@echo "Creating neccessary directories and giving permissions..."
+	@mkdir -p /home/${USER}/data/mariadb
+	@mkdir -p /home/${USER}/data/wordpress
+	@sudo chown -R $(USER):$(USER) /home/${USER}/data
 
 up:
 	@$(DOCKER_COMPOSE) up --build -d
@@ -35,7 +41,9 @@ nginx_ip:
 
 secrets:
 	@echo "Copying and setting secrets..."
-	@chmod 600 secrets/mysql_user_password.txt
 	@chmod 600 secrets/mysql_password.txt
+	@chmod 600 secrets/mysql_admin_password.txt
+	@chmod 600 secrets/wp_admin_password.txt
+	@chmod 600 secrets/wp_editor_password.txt
 
 .PHONY: all up down fclean re ps log nginx_ip secrets

@@ -6,7 +6,6 @@ services:
       context: srcs/requirements/nginx/.
       args:
         DOMAIN_NAME: ${DOMAIN_NAME}
-    container_name: nginx
     depends_on:
       wordpress:
         condition: service_healthy
@@ -20,7 +19,6 @@ services:
 
   wordpress:
     build: srcs/requirements/wordpress/.
-    container_name: wp-php
     depends_on:
       mariadb:
         condition: service_healthy
@@ -47,7 +45,6 @@ services:
 
   mariadb:
     build: srcs/requirements/mariadb/.
-    container_name: mariadb
     environment:
       MYSQL_USER: ${MYSQL_USER}
     secrets:
@@ -69,8 +66,17 @@ networks:
 
 volumes:
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/mariadb
   wordpress_data:
-
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/wordpress
 
 secrets:
   mysql_password:

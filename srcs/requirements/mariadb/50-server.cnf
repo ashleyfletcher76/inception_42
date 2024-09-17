@@ -1,7 +1,7 @@
 [server]
 
 # set the user s root for running MariaDb processes
-user                    = root
+user                    = mysql
 
 # define location of PID file for MariaDb
 pid-file                = /run/mysqld/mysqld.pid
