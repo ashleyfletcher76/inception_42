@@ -1,8 +1,5 @@
 [server]
 
-# specify teh SQL file to initialize the database on start up -hence the copy in the dockerfile
-init_file = /etc/mysql/init.sql
-
 # set the user s root for running MariaDb processes
 user                    = root
 

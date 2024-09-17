@@ -1,64 +1,57 @@
 #!/bin/bash
 
+set -e
+
 # Check if passwords and environment variables are set
 if [ -z "$MYSQL_USER" ]; then
-    echo "ERROR: MYSQL_USER is not set. Exiting."
-    exit 1
+	echo "ERROR: MYSQL_USER is not set. Exiting."
+	exit 1
 fi
 
 if [ ! -f /run/secrets/mysql_password ]; then
-    echo "ERROR: Secrets not found. Exiting."
-    exit 1
+	echo "ERROR: Secrets not found. Exiting."
+	exit 1
 fi
 
-# Read the secrets
+# get secrets password
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
 
-# Use these variables for the init.sql
-sed -i "s/password_placeholder/$MYSQL_PASSWORD/g" /etc/mysql/init.sql
-sed -i "s/\${MYSQL_USER}/$MYSQL_USER/g" /etc/mysql/init.sql
-
-# Debug: Verify that sed replaced the placeholders correctly
-echo "Verifying init.sql replacements:"
-cat /etc/mysql/init.sql
-
-# Clean up the MySQL data directory if present
-if [ -d "/var/lib/mysql/mysql" ]; then
-    echo "Cleaning up existing MySQL data..."
-    rm -rf /var/lib/mysql/*
-fi
-
-# Initialize the database if not already initialized
+# init the database if not already initialized
 if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "Initializing database..."
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	echo "Initializing database..."
+	mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
 
-    echo "Starting MariaDB temporarily"
-    mysqld --user=mysql --datadir=/var/lib/mysql --skip-networking &
-    pid="$!"
+	echo "Starting MariaDB temporarily"
+	mysqld_safe --datadir=/var/lib/mysql --skip-networking &
+	pid="$!"
 
-    # Wait for MariaDB to start
-    echo "Waiting for MariaDB to start..."
-    until mysqladmin ping --silent; do
-        sleep 1
-    done
+	echo "Waiting for MariaDB to start..."
+	until mysqladmin ping --silent; do
+		sleep 1
+	done
 
-    # Set the root password explicitly
-    echo "Setting root password"
-    mysql -uroot <<EOF
-        ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';
-        FLUSH PRIVILEGES;
+	echo "Creating database and user"
+	mysql -u root << EOF
+		CREATE DATABASE IF NOT EXISTS wordpress;
+		CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
+		GRANT ALL PRIVILEGES ON wordpress.* TO '$MYSQL_USER'@'%';
+		FLUSH PRIVILEGES;
 EOF
 
-    echo "Running init SQL script to set up database"
-    mysql -uroot -p$MYSQL_PASSWORD < /etc/mysql/init.sql
+	echo "Setting root password"
+	mysql -u root << EOF
+		ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('$MYSQL_PASSWORD');
+		FLUSH PRIVILEGES;
+EOF
 
-    # Shut down MariaDB after initialization
-    mysqladmin -uroot -p$MYSQL_PASSWORD shutdown
+	# shut down MariaDB after initialization
+	mysqladmin -uroot -p$MYSQL_PASSWORD shutdown
+
+	# wait for MariaDB to shut down
+	wait "$pid"
 else
-    echo "Database already initialized."
+	echo "Database already initialized."
 fi
 
-# Start MariaDB normally
+# start MariaDB normally
 exec mysqld --user=mysql --datadir=/var/lib/mysql
-
