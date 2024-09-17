@@ -2,5 +2,3 @@ secrets/
 *.log
 .DS_Store
 .env
-web/
-mariadb/

@@ -14,6 +14,10 @@ RUN apt update && apt upgrade -y && apt install -y \
 
 RUN mkdir -p /run/php
 
+# Install wp-cli globally
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x /usr/local/bin/wp
+
 # this file customizes PHP-FPM's behavior, such as listening on a specific socket
 COPY www.conf /etc/php/7.4/fpm/pool.d/.
 
