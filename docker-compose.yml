@@ -58,7 +58,7 @@ services:
     networks:
       inception:
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "mariadb" ]
+      test: [ "CMD-SHELL", "[ -f /var/lib/mysql/.initialized ] || exit 1" ]
       interval: 5s
       timeout: 10s
       retries: 5

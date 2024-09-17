@@ -20,3 +20,7 @@ bind-address            = 0.0.0.0
 
 # set log expiry date no onlder than 10 right now
 expire_logs_days        = 10
+
+[mysqld]
+general_log = 1
+general_log_file = /var/lib/mysql/general.log
