@@ -3,10 +3,15 @@
 # exits at first non-zero status
 set -e
 
+if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ] || [ -z "$MYSQL_DATABASE" ]; then
+    echo "ERROR: One or more required environment variables are not set. Exiting."
+    exit 1
+fi
+
 cd /var/www/html
 
 # wait for MariaDB
-while ! mysqladmin ping -hmariadb --silent; do
+while ! mysqladmin ping -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
 	echo "Waiting for MariaDB to be ready..."
 	sleep 2
 done
@@ -27,7 +32,7 @@ if [ ! -f wp-config.php ]; then
 	# install WordPress with the superuser
 	echo "Create wp config..."
 	wp config create \
-		--dbname=wordpress \
+		--dbname=$MYSQL_DATABASE \
 		--dbuser="$MYSQL_USER" \
 		--dbpass="$MYSQL_PASSWORD" \
 		--dbhost=mariadb \

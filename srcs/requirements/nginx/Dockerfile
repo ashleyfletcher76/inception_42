@@ -18,11 +18,8 @@ COPY default.conf /etc/nginx/sites-available/default
 
 RUN sed -i "s/DOMAIN_NAME/${DOMAIN_NAME}/g" /etc/nginx/sites-available/default
 
-# link the custom nginx config to sites-enabled
-RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-
 # expose port 443 for HTTPS
-EXPOSE 443
+EXPOSE 80 443
 
 # daemon off stop its running in background
 CMD ["nginx", "-g", "daemon off;"]

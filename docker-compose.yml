@@ -10,6 +10,7 @@ services:
       wordpress:
         condition: service_healthy
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - wordpress_data:/var/www/html
@@ -30,6 +31,7 @@ services:
       WP_EDITOR: ${WP_EDITOR}
       WP_EDITOR_EMAIL: ${WP_EDITOR_EMAIL}
       MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       DOMAIN_NAME: ${DOMAIN_NAME}
     secrets:
       - mysql_password
@@ -47,6 +49,7 @@ services:
     build: srcs/requirements/mariadb/.
     environment:
       MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     secrets:
       - mysql_password
     volumes:

@@ -32,7 +32,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 
 	echo "Creating database and user"
 	mysql -u root << EOF
-		CREATE DATABASE IF NOT EXISTS wordpress;
+		CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
 		CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
 		GRANT ALL PRIVILEGES ON wordpress.* TO '$MYSQL_USER'@'%';
 		FLUSH PRIVILEGES;
