@@ -1,16 +1,11 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 
 # build and run all services
-all: prepare up
-
-prepare: 
-	@echo "Creating neccessary directories and giving permissions..."
-	@mkdir -p /home/${USER}/data/mariadb
-	@mkdir -p /home/${USER}/data/wordpress
-	@sudo chown -R $(USER):$(USER) /home/${USER}/data
+all: up
 
 up:
-	@$(DOCKER_COMPOSE) up --build -d
+	@$(DOCKER_COMPOSE) build --no-cache
+	@$(DOCKER_COMPOSE) up -d
 	@echo "Containers are up and running."
 
 # stop containers but dont remove the volumes

@@ -7,10 +7,15 @@ FROM debian:bullseye
 # after installation, remove cached package lists to reduce the image size
 RUN apt update && apt upgrade -y && apt install -y \
 	php7.4-fpm \
-	php7.4-mysqli \
+	php7.4-mysql \
+	php7.4-curl \
+	php7.4-xml \
+	php7.4-mbstring \
+	php7.4-gd \
+	php7.4-zip \
 	curl \
-	mariadb-client && \
-	rm -rf /var/lib/apt/lists/*
+	mariadb-client \
+	&& rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /run/php
 

@@ -32,6 +32,7 @@ services:
       WP_EDITOR_EMAIL: ${WP_EDITOR_EMAIL}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_HOST: mariadb
       DOMAIN_NAME: ${DOMAIN_NAME}
     secrets:
       - mysql_password
@@ -69,17 +70,7 @@ networks:
 
 volumes:
   mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/mariadb
   wordpress_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/wordpress
 
 secrets:
   mysql_password:
