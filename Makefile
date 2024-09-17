@@ -37,7 +37,6 @@ nginx_ip:
 secrets:
 	@echo "Copying and setting secrets..."
 	@chmod 600 secrets/mysql_password.txt
-	@chmod 600 secrets/mysql_admin_password.txt
 	@chmod 600 secrets/wp_admin_password.txt
 	@chmod 600 secrets/wp_editor_password.txt
 

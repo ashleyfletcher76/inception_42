@@ -16,12 +16,8 @@ fi
 # get secrets password
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
 
-echo "MYSQL_USER: $MYSQL_USER"
-echo "MYSQL_DATABASE: $MYSQL_DATABASE"
-echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
-
 # init database if not already
-if [ ! -d "/var/lib/mysql/mysql/.initialized" ]; then
+if [ ! -d "/var/lib/mysql/.initialized" ]; then
     echo "Initializing database..."
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal
 	echo "Database files created."
@@ -29,11 +25,10 @@ if [ ! -d "/var/lib/mysql/mysql/.initialized" ]; then
     echo "Starting MariaDB temporarily"
     mysqld_safe --datadir=/var/lib/mysql --skip-networking &
     pid="$!"
-    echo "MariaDB temporary PID: $pid"
 
     echo "Waiting for MariaDB to start..."
     until mysqladmin ping --silent; do
-        sleep 1
+        sleep 5
     done
 
     echo "Creating database and user"
@@ -58,6 +53,7 @@ EOF
 
 	touch /var/lib/mysql/.initialized
     chown mysql:mysql /var/lib/mysql/.initialized
+	chmod 644 /var/lib/mysql/.initialized
 else
     echo "Database already initialized."
 fi
