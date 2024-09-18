@@ -1,0 +1,20 @@
+# ignore logs and temp files
+*.log
+*.tmp
+*.bak
+
+# ignore NGINX cache and temp files
+cache/
+temp/
+
+# ignore Git and version control files
+.git/
+.gitignore
+
+# ignore OS-specifc files
+.DS_Store
+Thumbs.db
+
+# ignore any conf file not needed in docker image
+*.conf.backup
+*.env
