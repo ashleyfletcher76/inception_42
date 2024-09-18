@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # exits at first non-zero status
-set -e
+set +x
 
 WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_EDITOR_PASSWORD=$(cat /run/secrets/wp_editor_password)
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
+
+set -x
 
 if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ] || [ -z "$MYSQL_DATABASE" ] || [ -z "$MYSQL_HOST" ]; then
     echo "ERROR: One or more required environment variables are not set. Exiting."

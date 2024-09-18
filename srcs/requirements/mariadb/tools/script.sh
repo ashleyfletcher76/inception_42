@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set +x
 
 # check if passwords and environment variables are set
 if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_DATABASE" ]; then
@@ -15,6 +15,9 @@ fi
 
 # get secrets password
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
+MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password)
+
+set -x
 
 # init database if not already
 if [ ! -f "/var/lib/mysql/.initialized" ]; then
@@ -41,12 +44,12 @@ EOF
 
     echo "Setting root password"
     mysql -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
 FLUSH PRIVILEGES;
 EOF
 
     # shut down MariaDB after initialization
-    mysqladmin -uroot -p"$MYSQL_PASSWORD" shutdown
+    mysqladmin -uroot -p"$MYSQL_ROOT_PASSWORD" shutdown
 
     # wait for MariaDB to shut down
     wait "$pid"
@@ -54,6 +57,9 @@ EOF
 	touch /var/lib/mysql/.initialized
     chown mysql:mysql /var/lib/mysql/.initialized
 	chmod 644 /var/lib/mysql/.initialized
+
+    unset MYSQL_PASSWORD
+    unset MYSQL_ROOT_PASSWORD
 else
     echo "Database already initialized."
 fi
