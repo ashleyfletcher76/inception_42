@@ -59,4 +59,6 @@ else
 fi
 
 # start MariaDB normally
+chown -R mysql:mysql /var/lib/mysql
+chmod -R 755 /var/lib/mysql
 exec mysqld --user=mysql --datadir=/var/lib/mysql
