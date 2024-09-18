@@ -1,25 +1,11 @@
-# ignore WordPress uploads and cache
+# ignore WordPress specific files
 wp-content/uploads/
 wp-content/cache/
 wp-content/debug.log
 
-# ignore logs, temp files and backups
+# ignore logs, temp files, and system files
 *.log
 *.tmp
 *.bak
-
-# ignore Git and version control files
-.git/
-.gitignore
-
-# ignore OS-specific files
 .DS_Store
 Thumbs.db
-
-# ignore Composer, Node etc.
-node_modules/
-vendor/
-
-# Ignore any secrets or env files
-*.env
-secrets/

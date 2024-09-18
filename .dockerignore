@@ -1,0 +1,11 @@
+# ignore global secrets and env files
+secrets/
+.env
+
+# ignore log files, temp files, and system files
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+

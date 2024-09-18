@@ -1,21 +1,9 @@
-# ignore local SQL dumps and lgos
+# ignore local database backups and logs
 *.sql
 *.log
 
-# ignore temp files and backups
+# ignore temp files and system specifc files
 *.tmp
 *.bak
-
-# ignore Git and version control files
-.git/
-.gitignore
-
-# ignore OS-specif file
 .DS_Store
 Thumbs.db
-
-# ignore secrets
-secrets/
-
-# ignore local config files
-*.env
