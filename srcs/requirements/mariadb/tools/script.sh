@@ -17,7 +17,7 @@ fi
 MYSQL_PASSWORD=$(cat /run/secrets/mysql_password)
 
 # init database if not already
-if [ ! -d "/var/lib/mysql/.initialized" ]; then
+if [ ! -f "/var/lib/mysql/.initialized" ]; then
     echo "Initializing database..."
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal
 	echo "Database files created."

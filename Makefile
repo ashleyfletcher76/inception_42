@@ -4,9 +4,13 @@ DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 all: up
 
 up:
-	@$(DOCKER_COMPOSE) build --no-cache
+	@$(DOCKER_COMPOSE) build
 	@$(DOCKER_COMPOSE) up -d
 	@echo "Containers are up and running."
+
+new: 
+	@$(DOCKER_COMPOSE) build --no-cache
+	@$(DOCKER_COMPOSE) up -d
 
 # stop containers but dont remove the volumes
 down:
