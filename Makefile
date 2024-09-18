@@ -1,14 +1,22 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 
 # build and run all services
-all: up
+all: prepare up
 
-up:
+# prepare necessary directories
+prepare:
+	@echo "Preparing directories for volumes..."
+	@if [ ! -d "/home/${USER}/data/mariadb" ]; then mkdir -p /home/${USER}/data/mariadb; fi
+	@if [ ! -d "/home/${USER}/data/wordpress" ]; then mkdir -p /home/${USER}/data/wordpress; fi
+	@sudo chown -R $(USER):$(USER) /home/${USER}/data
+	@echo "Directories are ready."
+
+up: prepare
 	@$(DOCKER_COMPOSE) build
 	@$(DOCKER_COMPOSE) up -d
 	@echo "Containers are up and running."
 
-new: 
+new: prepare
 	@$(DOCKER_COMPOSE) build --no-cache
 	@$(DOCKER_COMPOSE) up -d
 
@@ -22,6 +30,9 @@ fclean:
 	@$(DOCKER_COMPOSE) down -v --rmi all --remove-orphans
 	@docker volume prune -f
 	@echo "Containers, networks, images and volumes have been removed."
+	@echo "Removing /home/${USER}/data directory..."
+	@sudo rm -rf /home/${USER}/data
+	@echo "/home/${USER}/data directory removed."
 
 # restart containers
 re: fclean up
