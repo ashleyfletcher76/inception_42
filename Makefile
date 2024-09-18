@@ -1,4 +1,4 @@
-DOCKER_COMPOSE = docker-compose -f docker-compose.yml
+DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
 
 # build and run all services
 all: prepare up
@@ -45,14 +45,10 @@ ps:
 logs:
 	@$(DOCKER_COMPOSE) logs -f
 
-nginx_ip:
-	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx
-	@echo "NGINX IP fetched."
-
 secrets:
 	@echo "Copying and setting secrets..."
 	@chmod 600 secrets/mysql_password.txt
 	@chmod 600 secrets/wp_admin_password.txt
 	@chmod 600 secrets/wp_editor_password.txt
 
-.PHONY: all up down fclean re ps log nginx_ip secrets
+.PHONY: all up down fclean re ps logs secrets
