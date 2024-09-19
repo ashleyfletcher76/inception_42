@@ -2,8 +2,6 @@ FROM debian:bullseye
 
 # update package lists, upgrade installed packages, and install necessary dependencies
 # php7.4-fpm: PHP FastCGI Process Manager, needed for running PHP applications
-# php7.4-mysqli: MySQLi extension for interacting with MariaDB/MySQL databases
-# mariadb-client: MySQL client tools, allowing PHP to connect to the MariaDB database
 RUN apt update && apt upgrade -y && apt install -y \
 	php7.4-fpm \
 	php7.4-mysql \
