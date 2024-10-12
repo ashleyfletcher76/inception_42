@@ -94,11 +94,24 @@ The Makefile in this project automates many tasks. Below are the key targets:
 - make logs: Tails the logs of all running services.
 
 Example Commands:
-- make re
-- make all
-- make logs
-- make fclean
-- make ps
-etc..
+```bash
+make re
+```
+```bash
+make all
+```
+```bash
+make logs
+```
+```bash
+make fclean
+```
+```bash
+make ps
+```
+
+and more...
 
 ## Authors
+
+- **Ashley Fletcher** - *Developer* - [GitHub Profile](https://github.com/ashleyfletcher76)
