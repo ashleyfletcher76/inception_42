@@ -62,7 +62,7 @@ To get started with the Inception project, follow these steps:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/inception.git
+git clone https://github.com/ashleyfletcher76/inception_42.git
 cd inception
 ```
 2. Prepare directories and build the infrastructure: Run the following make commands:
